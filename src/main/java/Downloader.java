@@ -25,15 +25,12 @@ public class Downloader {
 
     /**
      * Выполняет скачивание файла
+     *
      * @return Возвращает объект файла
      * @throws IOException Когда не смог удалить файл или сохранить информацию
      */
     public File download() throws IOException {
-        File file = new File(this.storagePath + this.getShortFileName());
-        if (file.exists() && !file.delete()) {
-            throw new IOException("Не могу удалить файл по пути: " + file.getAbsolutePath());
-        }
-
+        File file = this.createFile();
         ReadableByteChannel readableByteChannel = Channels.newChannel(this.url.openStream());
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 
@@ -43,7 +40,21 @@ public class Downloader {
     }
 
     /**
+     * Метод создает файл (существующий удалит)
+     * @return Возвращает объект на файл
+     * @throws IOException Когда не смог удалить файл
+     */
+    protected File createFile() throws IOException {
+        File file = new File(this.storagePath + this.getShortFileName());
+        if (file.exists() && !file.delete()) {
+            throw new IOException("Не могу удалить файл по пути: " + file.getAbsolutePath());
+        }
+        return file;
+    }
+
+    /**
      * Метод для получения короткого имени файла
+     *
      * @return Возвращает имя файл с расширениями
      */
     protected String getShortFileName() {
