@@ -1,11 +1,12 @@
 package imports;
 
+import connections.IConnection;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class PostgreSql extends Import {
-    protected String dbName;
+public class PgImport extends Import {
 
     public static String DEFAULT_CMD_IMPORT = "LOAD CSV FROM '{fileName}' WITH ENCODING UTF-8" +
             " INTO postgresql://{user}:{password}@{host}:{port}/{dbname}?tablename={tableName}" +
@@ -13,12 +14,8 @@ public class PostgreSql extends Import {
             " WITH TRUNCATE, SKIP HEADER = 1, fields terminated by ',';";
 
 
-    public PostgreSql(String host, String port, String username, String password, String dbName, File db) {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
-        this.dbName = dbName;
+    public PgImport(IConnection connection, File db) {
+        this.connection = connection;
         this.db = db;
     }
 
@@ -29,7 +26,6 @@ public class PostgreSql extends Import {
             Path path = this.createSymlink(tableName);
             String fullCommand = this.generateCommand(tableName, path);
             File loadCsv = this.createLoadCsv(tableName, fullCommand);
-
             resultCode = this.executeCommand("pgloader " + loadCsv.toPath());
 
             Files.deleteIfExists(path);
@@ -43,6 +39,9 @@ public class PostgreSql extends Import {
 
     protected File createLoadCsv(String tableName, String command) throws IOException {
         File file = new File("/tmp/" + tableName + ".load");
+        if (file.exists() && !file.delete()) {
+            throw new IOException("Не удалось удалить файл " + file.toPath());
+        }
         OutputStreamWriter outputStream = new OutputStreamWriter(new FileOutputStream(file));
         outputStream.write(command);
         outputStream.close();
@@ -52,11 +51,11 @@ public class PostgreSql extends Import {
 
     protected String generateCommand(String tableName, Path path) {
         return DEFAULT_CMD_IMPORT
-                .replace("{host}", this.host)
-                .replace("{port}", this.port)
-                .replace("{user}", this.username)
-                .replace("{password}", this.password)
-                .replace("{dbname}", this.dbName)
+                .replace("{host}", this.connection.getHost())
+                .replace("{port}", this.connection.getPort())
+                .replace("{user}", this.connection.getUsername())
+                .replace("{password}", this.connection.getPassword())
+                .replace("{dbname}", this.connection.getDbName())
                 .replace("{tableName}", tableName)
                 .replace("{fileName}", path.toString());
     }

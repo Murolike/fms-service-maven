@@ -1,17 +1,16 @@
 package imports;
 
+import connections.IConnection;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class Mysql extends Import {
+public class MySqlImport extends Import {
 
-    public Mysql(String host, String port, String username, String password, File db) {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
+    public MySqlImport(IConnection connection, File db) {
+        this.connection = connection;
         this.db = db;
     }
 
@@ -33,10 +32,10 @@ public class Mysql extends Import {
 
     protected String generateCommand(Path path) {
         return DEFAULT_CMD_IMPORT
-                .replace("{host}", this.host)
-                .replace("{port}", this.port)
-                .replace("{user}", this.username)
-                .replace("{password}", this.password)
+                .replace("{host}", this.connection.getHost())
+                .replace("{port}", this.connection.getPort())
+                .replace("{user}", this.connection.getUsername())
+                .replace("{password}", this.connection.getPassword())
                 .replace("{fileName}", path.toString());
     }
 }
