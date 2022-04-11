@@ -1,3 +1,5 @@
+package archivers;
+
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 import java.io.*;
@@ -5,7 +7,7 @@ import java.io.*;
 /**
  * Класс для разорхивации файлов bz2
  */
-public class Bzip2 {
+public class Bzip2 implements Archiver {
     /**
      * Буфер
      */
@@ -26,7 +28,7 @@ public class Bzip2 {
      * @throws IOException Возникает когда файл не был найден
      */
     public File unzip() throws IOException {
-        File file = new File(this.getAbsoluteFilePathUncompressed());
+        File file = this.createFile();
         BZip2CompressorInputStream bZipInputStream = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(this.archive)), true);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         final byte[] buffer = new byte[BUFFER_SIZE];
@@ -41,11 +43,24 @@ public class Bzip2 {
     }
 
     /**
+     * Создает файл, если он есть, то удалит
+     * @return Возвращает файл
+     * @throws IOException Возникает, когда не удалось удалить существующий файл
+     */
+    protected File createFile() throws IOException {
+        File file = new File(this.getUncompressedFilePath());
+        if (file.exists() && !file.delete()) {
+            throw new IOException("Не могу удалить файл по пути: " + file.getAbsolutePath());
+        }
+        return file;
+    }
+
+    /**
      * Метод возвращает полный путь до файла без расширения архива
      *
      * @return Возвращает полный путь до файла
      */
-    protected String getAbsoluteFilePathUncompressed() {
+    protected String getUncompressedFilePath() {
         String path = this.archive.getAbsolutePath();
         return path.substring(0, path.lastIndexOf("."));
     }

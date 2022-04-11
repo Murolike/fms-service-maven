@@ -1,3 +1,4 @@
+import archivers.Bzip2;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
