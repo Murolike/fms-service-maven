@@ -1,6 +1,5 @@
 package imports;
 
-import imports.MysqlImport;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -12,7 +11,7 @@ class MysqlImportTest {
     @Test
     void run()  {
         assertDoesNotThrow(() -> {
-            MysqlImport model = new MysqlImport("localhost", "3306", "root", "test", new File("/tmp/list_of_expired_passports.csv"));
+            Mysql model = new Mysql("localhost", "3306", "root", "test", new File("/tmp/list_of_expired_passports.csv"));
             model.run();
         });
     }
