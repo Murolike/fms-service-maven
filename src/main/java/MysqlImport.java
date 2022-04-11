@@ -26,13 +26,7 @@ public class MysqlImport {
         int resultCode;
         for (String tableName : TABLE_NAMES) {
             Path path = this.createSymlink(tableName);
-            String fullCommand = DEFAULT_CMD_IMPORT
-                    .replace("{host}", this.host)
-                    .replace("{port}", this.port)
-                    .replace("{user}", this.username)
-                    .replace("{password}", this.password)
-                    .replace("{fileName}", path.toString());
-
+            String fullCommand = this.generateCommand(path);
             resultCode = this.executeCommand(fullCommand);
 
             Files.deleteIfExists(path);
@@ -41,6 +35,15 @@ public class MysqlImport {
                 throw new RuntimeException("При выполнении команды " + fullCommand + " произошла ошибка - код => " + resultCode);
             }
         }
+    }
+
+    protected String generateCommand(Path path) {
+        return DEFAULT_CMD_IMPORT
+                .replace("{host}", this.host)
+                .replace("{port}", this.port)
+                .replace("{user}", this.username)
+                .replace("{password}", this.password)
+                .replace("{fileName}", path.toString());
     }
 
     protected int executeCommand(String command) throws InterruptedException, IOException {
