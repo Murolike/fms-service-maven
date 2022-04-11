@@ -1,3 +1,6 @@
+package downloaders;
+
+import downloaders.Downloader;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

@@ -1,3 +1,5 @@
+package archivers;
+
 import archivers.Bzip2;
 import org.junit.jupiter.api.Test;
 
