@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MySqlImport extends Import {
+    public static String DEFAULT_CMD_IMPORT = "mysqlimport --local -d --fields-terminated-by=, --ignore-lines=1 --host={host} --port={port} --user={user} --password={password} fms {fileName}";
 
     public MySqlImport(IConnection connection, File db) {
         this.connection = connection;

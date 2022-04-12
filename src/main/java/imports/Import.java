@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 
 abstract public class Import {
     public final static String[] TABLE_NAMES = {"invalid_passports_master", "invalid_passports_slave"};
-    public static String DEFAULT_CMD_IMPORT = "mysqlimport --local -d --fields-terminated-by=, --ignore-lines=1 --host={host} --port={port} --user={user} --password={password} fms {fileName}";
 
     protected IConnection connection;
     protected File db;
